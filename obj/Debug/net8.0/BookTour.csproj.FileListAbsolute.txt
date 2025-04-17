@@ -146,3 +146,4 @@ C:\Codethue\C Sharp\BookTour\BookTour\obj\Debug\net8.0\refint\BookTour.dll
 C:\Codethue\C Sharp\BookTour\BookTour\obj\Debug\net8.0\BookTour.pdb
 C:\Codethue\C Sharp\BookTour\BookTour\obj\Debug\net8.0\BookTour.genruntimeconfig.cache
 C:\Codethue\C Sharp\BookTour\BookTour\obj\Debug\net8.0\ref\BookTour.dll
+C:\Codethue\C Sharp\BookTour\BookTour\obj\Debug\net8.0\BookTour.sourcelink.json

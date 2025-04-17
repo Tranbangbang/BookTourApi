@@ -10,5 +10,6 @@ namespace BookTour.Repository
         Task<IEnumerable<Tour>> SearchToursAsync(string destination, decimal? minPrice, decimal? maxPrice, int? duration);
         Task<Booking> CreateBookingAsync(Booking booking);
         Task<IEnumerable<BookingDetail>> CreateBookingDetailsAsync(IEnumerable<BookingDetail> bookingDetails);
+        Task<IEnumerable<Booking>> GetBookingsByUserIdAsync(int userId);
     }
 }

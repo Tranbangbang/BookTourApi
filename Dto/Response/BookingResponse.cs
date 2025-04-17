@@ -10,6 +10,7 @@
         public decimal TotalAmount { get; set; } 
         public string Status { get; set; }  
         public string PaymentStatus { get; set; }  
-        public DateTime BookingDate { get; set; }  
+        public DateTime BookingDate { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

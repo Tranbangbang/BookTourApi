@@ -84,5 +84,19 @@ namespace BookTour.Controllers
             }
             return StatusCode(500, response);
         }
+
+
+        // GET: api/Tours/BookingHistory/{userId}
+        [HttpGet("BookingHistory/{userId}")]
+        public async Task<ActionResult<ApiResponse<List<BookingResponse>>>> GetBookingHistory(int userId)
+        {
+            var response = await _tourService.GetBookingHistoryAsync(userId);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return StatusCode(500, response);
+        }
+
     }
 }

@@ -209,6 +209,37 @@ namespace BookTour.Service.Impl
                 return ApiResponse<BookingResponse>.ErrorResponse($"Lỗi khi đặt tour: {ex.Message}");
             }
         }
+
+
+        public async Task<ApiResponse<List<BookingResponse>>> GetBookingHistoryAsync(int userId)
+        {
+            try
+            {
+                var bookings = await _tourRepository.GetBookingsByUserIdAsync(userId);
+
+                var response = bookings.Select(b => new BookingResponse
+                {
+                    BookingId = b.BookingId,
+                    TourName = b.Tour.TourName,
+                    TourDate = b.TourDate,
+                    AdultCount = b.AdultCount,
+                    ChildCount = b.ChildCount,
+                    TotalAmount = b.TotalAmount,
+                    Status = b.Status,
+                    PaymentStatus = b.PaymentStatus,
+                    BookingDate = b.BookingDate,
+                    ImageUrl = b.Tour.TourImages.FirstOrDefault(i => i.IsPrimary)?.ImageUrl ??
+                        b.Tour.TourImages.FirstOrDefault()?.ImageUrl
+                }).ToList();
+
+                return ApiResponse<List<BookingResponse>>.SuccessResponse(response);
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<List<BookingResponse>>.ErrorResponse($"Lỗi khi lấy lịch sử đặt tour: {ex.Message}");
+            }
+        }
+
         #endregion
     }
 }

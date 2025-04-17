@@ -85,5 +85,17 @@ namespace BookTour.Repository.Impl
             await _context.SaveChangesAsync();
             return bookingDetails;
         }
+
+
+        public async Task<IEnumerable<Booking>> GetBookingsByUserIdAsync(int userId)
+        {
+            return await _context.Bookings
+                .Include(b => b.Tour) 
+                .ThenInclude(t => t.TourImages) 
+                .Where(b => b.UserId == userId)
+                .ToListAsync();
+        }
+
+
     }
 }
