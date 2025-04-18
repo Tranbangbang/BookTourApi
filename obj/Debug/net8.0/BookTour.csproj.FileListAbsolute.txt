@@ -147,3 +147,4 @@ C:\Codethue\C Sharp\BookTour\BookTour\obj\Debug\net8.0\BookTour.pdb
 C:\Codethue\C Sharp\BookTour\BookTour\obj\Debug\net8.0\BookTour.genruntimeconfig.cache
 C:\Codethue\C Sharp\BookTour\BookTour\obj\Debug\net8.0\ref\BookTour.dll
 C:\Codethue\C Sharp\BookTour\BookTour\obj\Debug\net8.0\BookTour.sourcelink.json
+C:\Codethue\C Sharp\BookTour\BookTour\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

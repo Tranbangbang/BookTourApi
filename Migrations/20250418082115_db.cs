@@ -29,6 +29,19 @@ namespace BookTour.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    RoleId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.RoleId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tours",
                 columns: table => new
                 {
@@ -56,12 +69,12 @@ namespace BookTour.Migrations
                 {
                     UserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    FullName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastLogin = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -250,6 +263,30 @@ namespace BookTour.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_UserRoles_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "RoleId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserRoles_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DestinationDetails",
                 columns: table => new
                 {
@@ -385,20 +422,31 @@ namespace BookTour.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "RoleId", "RoleName" },
+                values: new object[,]
+                {
+                    { 1, "User" },
+                    { 2, "Admin" },
+                    { 3, "Manager" },
+                    { 4, "Tourism Company" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Tours",
                 columns: new[] { "TourId", "AdultPrice", "ChildPrice", "CreatedAt", "Description", "Duration", "IsActive", "IsFeatured", "TourName", "Transportation", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, 4990000m, 4990000m, new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4920), "Khám phá vẻ đẹp của Hà Nội với tour trọn gói. Tham quan các địa điểm nổi tiếng như Hồ Gươm, Văn Miếu, Hoàng thành Thăng Long và trải nghiệm văn hóa ẩm thực đường phố Hà Nội.", 3, true, true, "Tour Hà Nội", "Xe du lịch", new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4921) },
-                    { 2, 5990000m, 5990000m, new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4924), "Khám phá vẻ đẹp của Đà Nẵng với tour trọn gói. Tham quan Bà Nà Hills, Cầu Rồng, bãi biển Mỹ Khê và Ngũ Hành Sơn. Trải nghiệm ẩm thực đặc sắc của miền Trung.", 4, true, true, "Tour Đà Nẵng", "Xe du lịch", new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4924) },
-                    { 3, 3990000m, 3990000m, new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4927), "Khám phá vẻ đẹp của Huế với tour trọn gói. Tham quan Đại Nội, các lăng tẩm vua Nguyễn, chùa Thiên Mụ và thưởng thức ẩm thực cung đình Huế.", 2, true, true, "Tour Huế", "Xe du lịch", new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4927) },
-                    { 4, 6990000m, 6990000m, new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4930), "Khám phá vẻ đẹp của Nha Trang với tour trọn gói. Tham quan Vinpearl Land, vịnh Nha Trang, Tháp Bà Ponagar và tắm biển tại các bãi biển đẹp nhất Nha Trang.", 5, true, true, "Tour Nha Trang", "Xe du lịch", new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4930) },
-                    { 5, 5500000m, 4500000m, new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4933), "Khám phá vẻ đẹp của Hồ Chí Minh với tour trọn gói. Tham quan Nhà thờ Đức Bà, Bưu điện Trung tâm, Chợ Bến Thành, Dinh Độc Lập và trải nghiệm cuộc sống sôi động của thành phố.", 3, true, true, "Tour Hồ Chí Minh", "Xe du lịch", new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4933) },
-                    { 6, 5990000m, 4990000m, new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4936), "Khám phá vẻ đẹp của Sapa với tour trọn gói. Chinh phục Fansipan, tham quan các bản làng dân tộc, ngắm ruộng bậc thang và trải nghiệm văn hóa vùng cao.", 4, true, true, "Tour Sapa", "Xe du lịch", new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4936) },
-                    { 7, 5990000m, 4990000m, new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4939), "Khám phá vẻ đẹp của Vịnh Hạ Long với tour trọn gói. Tham quan các hang động, đảo đá và trải nghiệm đêm trên vịnh Hạ Long.", 3, true, true, "Tour Hạ Long", "Xe du lịch + Tàu", new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4939) },
-                    { 8, 3990000m, 3490000m, new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4942), "Khám phá vẻ đẹp của Hội An với tour trọn gói. Tham quan phố cổ, làng nghề truyền thống và trải nghiệm không khí cổ kính của Hội An.", 2, true, true, "Tour Hội An", "Xe du lịch", new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4943) },
-                    { 9, 5490000m, 4490000m, new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4945), "Khám phá vẻ đẹp của Đà Lạt với tour trọn gói. Tham quan các điểm du lịch nổi tiếng và trải nghiệm khí hậu mát mẻ của thành phố ngàn hoa.", 4, true, true, "Tour Đà Lạt", "Xe du lịch", new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4945) },
-                    { 10, 8990000m, 7990000m, new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4948), "Khám phá vẻ đẹp của Phú Quốc với tour trọn gói. Tham quan các bãi biển đẹp, làng chài và trải nghiệm hoạt động lặn biển ngắm san hô.", 5, true, true, "Tour Phú Quốc", "Máy bay + Xe du lịch", new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4948) }
+                    { 1, 4990000m, 4990000m, new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3152), "Khám phá vẻ đẹp của Hà Nội với tour trọn gói. Tham quan các địa điểm nổi tiếng như Hồ Gươm, Văn Miếu, Hoàng thành Thăng Long và trải nghiệm văn hóa ẩm thực đường phố Hà Nội.", 3, true, true, "Tour Hà Nội", "Xe du lịch", new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3153) },
+                    { 2, 5990000m, 5990000m, new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3157), "Khám phá vẻ đẹp của Đà Nẵng với tour trọn gói. Tham quan Bà Nà Hills, Cầu Rồng, bãi biển Mỹ Khê và Ngũ Hành Sơn. Trải nghiệm ẩm thực đặc sắc của miền Trung.", 4, true, true, "Tour Đà Nẵng", "Xe du lịch", new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3157) },
+                    { 3, 3990000m, 3990000m, new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3160), "Khám phá vẻ đẹp của Huế với tour trọn gói. Tham quan Đại Nội, các lăng tẩm vua Nguyễn, chùa Thiên Mụ và thưởng thức ẩm thực cung đình Huế.", 2, true, true, "Tour Huế", "Xe du lịch", new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3160) },
+                    { 4, 6990000m, 6990000m, new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3163), "Khám phá vẻ đẹp của Nha Trang với tour trọn gói. Tham quan Vinpearl Land, vịnh Nha Trang, Tháp Bà Ponagar và tắm biển tại các bãi biển đẹp nhất Nha Trang.", 5, true, true, "Tour Nha Trang", "Xe du lịch", new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3164) },
+                    { 5, 5500000m, 4500000m, new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3166), "Khám phá vẻ đẹp của Hồ Chí Minh với tour trọn gói. Tham quan Nhà thờ Đức Bà, Bưu điện Trung tâm, Chợ Bến Thành, Dinh Độc Lập và trải nghiệm cuộc sống sôi động của thành phố.", 3, true, true, "Tour Hồ Chí Minh", "Xe du lịch", new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3167) },
+                    { 6, 5990000m, 4990000m, new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3170), "Khám phá vẻ đẹp của Sapa với tour trọn gói. Chinh phục Fansipan, tham quan các bản làng dân tộc, ngắm ruộng bậc thang và trải nghiệm văn hóa vùng cao.", 4, true, true, "Tour Sapa", "Xe du lịch", new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3171) },
+                    { 7, 5990000m, 4990000m, new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3173), "Khám phá vẻ đẹp của Vịnh Hạ Long với tour trọn gói. Tham quan các hang động, đảo đá và trải nghiệm đêm trên vịnh Hạ Long.", 3, true, true, "Tour Hạ Long", "Xe du lịch + Tàu", new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3174) },
+                    { 8, 3990000m, 3490000m, new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3177), "Khám phá vẻ đẹp của Hội An với tour trọn gói. Tham quan phố cổ, làng nghề truyền thống và trải nghiệm không khí cổ kính của Hội An.", 2, true, true, "Tour Hội An", "Xe du lịch", new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3177) },
+                    { 9, 5490000m, 4490000m, new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3180), "Khám phá vẻ đẹp của Đà Lạt với tour trọn gói. Tham quan các điểm du lịch nổi tiếng và trải nghiệm khí hậu mát mẻ của thành phố ngàn hoa.", 4, true, true, "Tour Đà Lạt", "Xe du lịch", new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3180) },
+                    { 10, 8990000m, 7990000m, new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3183), "Khám phá vẻ đẹp của Phú Quốc với tour trọn gói. Tham quan các bãi biển đẹp, làng chài và trải nghiệm hoạt động lặn biển ngắm san hô.", 5, true, true, "Tour Phú Quốc", "Máy bay + Xe du lịch", new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3183) }
                 });
 
             migrationBuilder.InsertData(
@@ -406,11 +454,11 @@ namespace BookTour.Migrations
                 columns: new[] { "UserId", "Address", "CreatedAt", "Email", "FullName", "LastLogin", "Password", "Phone", "Username" },
                 values: new object[,]
                 {
-                    { 1, "Hà Nội", new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4650), "user1@example.com", "Nguyễn Văn A", null, "hashed_password_here", "0901234567", "user1" },
-                    { 2, "Hồ Chí Minh", new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4653), "user2@example.com", "Trần Thị B", null, "hashed_password_here", "0901234568", "user2" },
-                    { 3, "Đà Nẵng", new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4655), "user3@example.com", "Lê Văn C", null, "hashed_password_here", "0901234569", "user3" },
-                    { 4, "Huế", new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4657), "user4@example.com", "Phạm Thị D", null, "hashed_password_here", "0901234570", "user4" },
-                    { 5, "Nha Trang", new DateTime(2025, 4, 17, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(4658), "user5@example.com", "Hoàng Văn E", null, "hashed_password_here", "0901234571", "user5" }
+                    { 1, "Hà Nội", new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(2896), "user1@example.com", "Nguyễn Văn A", null, "hashed_password_here", "0901234567", "user1" },
+                    { 2, "Hồ Chí Minh", new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(2898), "user2@example.com", "Trần Thị B", null, "hashed_password_here", "0901234568", "user2" },
+                    { 3, "Đà Nẵng", new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(2901), "user3@example.com", "Lê Văn C", null, "hashed_password_here", "0901234569", "user3" },
+                    { 4, "Huế", new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(2902), "user4@example.com", "Phạm Thị D", null, "hashed_password_here", "0901234570", "user4" },
+                    { 5, "Nha Trang", new DateTime(2025, 4, 18, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(2904), "user5@example.com", "Hoàng Văn E", null, "hashed_password_here", "0901234571", "user5" }
                 });
 
             migrationBuilder.InsertData(
@@ -459,12 +507,12 @@ namespace BookTour.Migrations
                 columns: new[] { "ReviewId", "Comment", "Rating", "ReviewDate", "TourId", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "Tour rất tuyệt vời, hướng dẫn viên nhiệt tình, các điểm tham quan đều rất đẹp!", 5, new DateTime(2025, 4, 12, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(5199), 1, 1 },
-                    { 2, "Tôi rất hài lòng với chuyến đi này, chỉ tiếc là thời gian hơi ngắn.", 4, new DateTime(2025, 4, 7, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(5208), 1, 2 },
-                    { 3, "Đà Nẵng quá đẹp, đặc biệt là Bà Nà Hills và Cầu Vàng. Sẽ quay lại lần nữa!", 5, new DateTime(2025, 4, 10, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(5210), 2, 3 },
-                    { 4, "Tour được tổ chức rất chuyên nghiệp, hướng dẫn viên vui tính và am hiểu lịch sử.", 4, new DateTime(2025, 4, 2, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(5211), 2, 4 },
-                    { 5, "Huế có quá nhiều di tích lịch sử đẹp, ẩm thực cũng rất ngon. Rất đáng để đi!", 5, new DateTime(2025, 4, 9, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(5213), 3, 5 },
-                    { 6, "Tour được tổ chức tốt, chỉ tiếc là thời tiết không ủng hộ.", 4, new DateTime(2025, 3, 28, 11, 17, 58, 407, DateTimeKind.Local).AddTicks(5215), 3, 1 }
+                    { 1, "Tour rất tuyệt vời, hướng dẫn viên nhiệt tình, các điểm tham quan đều rất đẹp!", 5, new DateTime(2025, 4, 13, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3463), 1, 1 },
+                    { 2, "Tôi rất hài lòng với chuyến đi này, chỉ tiếc là thời gian hơi ngắn.", 4, new DateTime(2025, 4, 8, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3473), 1, 2 },
+                    { 3, "Đà Nẵng quá đẹp, đặc biệt là Bà Nà Hills và Cầu Vàng. Sẽ quay lại lần nữa!", 5, new DateTime(2025, 4, 11, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3475), 2, 3 },
+                    { 4, "Tour được tổ chức rất chuyên nghiệp, hướng dẫn viên vui tính và am hiểu lịch sử.", 4, new DateTime(2025, 4, 3, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3477), 2, 4 },
+                    { 5, "Huế có quá nhiều di tích lịch sử đẹp, ẩm thực cũng rất ngon. Rất đáng để đi!", 5, new DateTime(2025, 4, 10, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3478), 3, 5 },
+                    { 6, "Tour được tổ chức tốt, chỉ tiếc là thời tiết không ủng hộ.", 4, new DateTime(2025, 3, 29, 15, 21, 15, 38, DateTimeKind.Local).AddTicks(3480), 3, 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -472,14 +520,14 @@ namespace BookTour.Migrations
                 columns: new[] { "ImageId", "ImageUrl", "IsPrimary", "TourId" },
                 values: new object[,]
                 {
-                    { 1, "/images/tours/hanoi/hanoi-main.jpg", true, 1 },
-                    { 2, "/images/tours/hanoi/ho-guom.jpg", false, 1 },
-                    { 3, "/images/tours/hanoi/van-mieu.jpg", false, 1 },
-                    { 4, "/images/tours/hanoi/hoang-thanh.jpg", false, 1 },
-                    { 5, "/images/tours/danang/danang-main.jpg", true, 2 },
-                    { 6, "/images/tours/danang/ba-na-hills.jpg", false, 2 },
-                    { 7, "/images/tours/danang/my-khe-beach.jpg", false, 2 },
-                    { 8, "/images/tours/danang/dragon-bridge.jpg", false, 2 },
+                    { 1, "https://images.unsplash.com/photo-1509030450996-dd1a26dda07a?q=80&w=2123&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", true, 1 },
+                    { 2, "https://images.unsplash.com/photo-1656520727264-67d0a9af5e85?q=80&w=2076&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", false, 1 },
+                    { 3, "https://images.unsplash.com/photo-1653914902511-76e819452618?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", false, 1 },
+                    { 4, "https://images.unsplash.com/photo-1676019266474-3538f3f19e6b?q=80&w=1953&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", false, 1 },
+                    { 5, "https://images.unsplash.com/photo-1558002890-c0b30998d1e6?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", true, 2 },
+                    { 6, "https://images.unsplash.com/photo-1719836731185-0ff5ad81d1fb?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", false, 2 },
+                    { 7, "https://images.unsplash.com/photo-1708192071369-0296db1421aa?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", false, 2 },
+                    { 8, "https://images.unsplash.com/photo-1701396173275-835886dd72ce?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8ZHJhZ29uJTIwYnJpZGdlfGVufDB8fDB8fHww", false, 2 },
                     { 9, "/images/tours/hue/hue-main.jpg", true, 3 },
                     { 10, "/images/tours/hue/dai-noi.jpg", false, 3 },
                     { 11, "/images/tours/hue/thien-mu.jpg", false, 3 },
@@ -512,6 +560,15 @@ namespace BookTour.Migrations
                     { 7, "Sáng: Tắm biển Mỹ Khê\nTrưa: Ăn trưa tại nhà hàng ven biển\nChiều: Tham quan Cầu Rồng\nTối: Ngắm Cầu Rồng phun lửa và nước", 4, "Ngày 4: Tắm biển Mỹ Khê", 2 },
                     { 8, "Sáng: Tham quan Đại Nội Huế\nTrưa: Ăn trưa với ẩm thực cung đình\nChiều: Tham quan Bảo tàng Cổ vật Cung đình Huế\nTối: Thưởng thức ca Huế trên sông Hương", 1, "Ngày 1: Khám phá Đại Nội Huế", 3 },
                     { 9, "Sáng: Tham quan Lăng Tự Đức và Lăng Khải Định\nTrưa: Ăn trưa tại nhà hàng địa phương\nChiều: Tham quan chùa Thiên Mụ\nTối: Thưởng thức ẩm thực Huế", 2, "Ngày 2: Tham quan các lăng tẩm", 3 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[,]
+                {
+                    { 1, 1 },
+                    { 2, 2 }
                 });
 
             migrationBuilder.InsertData(
@@ -682,6 +739,11 @@ namespace BookTour.Migrations
                 name: "IX_TourSchedules_TourId",
                 table: "TourSchedules",
                 column: "TourId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRoles_RoleId",
+                table: "UserRoles",
+                column: "RoleId");
         }
 
         /// <inheritdoc />
@@ -715,6 +777,9 @@ namespace BookTour.Migrations
                 name: "TourSchedules");
 
             migrationBuilder.DropTable(
+                name: "UserRoles");
+
+            migrationBuilder.DropTable(
                 name: "Bookings");
 
             migrationBuilder.DropTable(
@@ -722,6 +787,9 @@ namespace BookTour.Migrations
 
             migrationBuilder.DropTable(
                 name: "Destinations");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Tours");

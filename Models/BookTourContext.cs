@@ -9,6 +9,8 @@ namespace BookTour.Models
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Destination> Destinations { get; set; }
         public DbSet<Tour> Tours { get; set; }
@@ -27,6 +29,9 @@ namespace BookTour.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<UserRole>()
+      .HasKey(ur => new { ur.UserId, ur.RoleId });
+
 
             // Seed data
             SeedData(modelBuilder);
@@ -34,6 +39,20 @@ namespace BookTour.Models
 
         private void SeedData(ModelBuilder modelBuilder)
         {
+            // Seed Roles
+            modelBuilder.Entity<Role>().HasData(
+                new Role { RoleId = 1, RoleName = "User" },
+                new Role { RoleId = 2, RoleName = "Admin" },
+                new Role { RoleId = 3, RoleName = "Manager" },
+                new Role { RoleId = 4, RoleName = "Tourism Company" }
+            );
+
+         
+     
+            modelBuilder.Entity<UserRole>().HasData(
+                new UserRole { UserId = 1, RoleId = 1 }, 
+                new UserRole { UserId = 2, RoleId = 2 }  
+            );
             // Seed Users
             modelBuilder.Entity<User>().HasData(
                 new User { UserId = 1, Username = "user1", Password = "hashed_password_here", FullName = "Nguyễn Văn A", Email = "user1@example.com", Phone = "0901234567", Address = "Hà Nội", CreatedAt = DateTime.Now },
